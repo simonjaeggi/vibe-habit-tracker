@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
-import { GoogleProfilePayload } from '../users/entities/user.entity';
+import { GoogleProfilePayload, User } from '../users/entities/user.entity';
 import {
   AuthenticatedUser,
   OAuthTokens,
@@ -8,7 +9,10 @@ import {
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly jwtService: JwtService,
+  ) {}
 
   async handleGoogleLogin(
     profile: GoogleProfilePayload,
@@ -21,10 +25,19 @@ export class AuthService {
     };
   }
 
+  signUser(user: User) {
+    return this.jwtService.sign({
+      sub: user.id,
+      email: user.email,
+    });
+  }
+
   buildLoginResponse(authenticated: AuthenticatedUser) {
+    const jwt = this.signUser(authenticated.user);
     return {
       user: authenticated.user,
       tokens: authenticated.tokens,
+      jwt,
     };
   }
 }

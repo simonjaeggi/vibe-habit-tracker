@@ -12,11 +12,11 @@ import { DiaryEntriesService } from './diary-entries.service';
 import { CreateDiaryEntryDto } from './dto/create-diary-entry.dto';
 import { UpdateDiaryEntryDto } from './dto/update-diary-entry.dto';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
-import { HeaderUserGuard } from '../auth/guards/header-user.guard';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { User } from '../users/entities/user.entity';
 
 @Controller('diary')
-@UseGuards(HeaderUserGuard)
+@UseGuards(JwtAuthGuard)
 export class DiaryEntriesController {
   constructor(private readonly diaryEntriesService: DiaryEntriesService) {}
 

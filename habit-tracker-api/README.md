@@ -30,6 +30,9 @@ Backend service for the Vibe Habit Tracker. This NestJS application currently fo
    | `DATABASE_URL` | Optional connection string for Postgres/MySQL/etc. when `DATABASE_TYPE` is not `sqlite` |
    | `DATABASE_SYNCHRONIZE` | Allow TypeORM to auto-sync entities; keep `true` for local dev only |
    | `FRONTEND_ORIGIN` | Comma-separated list of origins allowed to call the API (defaults to all origins if unset) |
+   | `FRONTEND_APP_URL` | URL the API should redirect to after Google OAuth completion (`http://localhost:5173/auth/callback` by default) |
+   | `JWT_SECRET` | Secret used to sign first-party JWTs |
+   | `JWT_EXPIRES_IN` | Lifespan of issued JWTs (e.g. `7d`, `1h`) |
 
 3. **Run the API**
 
@@ -44,15 +47,16 @@ Backend service for the Vibe Habit Tracker. This NestJS application currently fo
 
 The TypeORM-powered `UsersService` persists Google accounts into a local SQLite file so you can keep working offline. Switch `DATABASE_TYPE`/`DATABASE_URL` to point at Postgres, MySQL, etc., when you're ready for a shared environment.
 
+If `FRONTEND_APP_URL` is configured, the API automatically redirects back to that URL with `token`, `userId`, `displayName`, and `email` query parameters so browser clients can store the JWT and hydrate their UI without manual copy/paste.
 ## Authenticated API Calls
 
-Until a first-party session mechanism lands, authenticated requests to the REST API expect an `X-User-Id` header whose value matches the `user.id` returned from the Google OAuth callback. The `HeaderUserGuard` loads the user from the database and injects it into the request context so downstream handlers can automatically scope data to the caller.
+After a user completes the Google OAuth flow, the API now returns (or redirects with) a signed JWT. Clients should store the token and send it with every protected request:
 
 ```
-X-User-Id: 3bc0b792-f00d-4fa3-82d0-1234abcd5678
+Authorization: Bearer <jwt>
 ```
 
-Requests missing the header or referencing a user that doesn't exist will be rejected with `401 Unauthorized`.
+Tokens encode the Nest user ID (`sub`) and email, allowing the backend to authorize diary actions without exposing raw Google tokens to the frontend.
 
 ## Diary Entries
 
