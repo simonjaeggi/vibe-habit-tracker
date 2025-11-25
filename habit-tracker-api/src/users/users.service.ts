@@ -22,6 +22,12 @@ export class UsersService {
     });
   }
 
+  findByEmail(email: string): Promise<User | null> {
+    return this.usersRepository.findOne({
+      where: { email },
+    });
+  }
+
   async upsertGoogleUser(payload: GoogleProfilePayload): Promise<User> {
     let user = await this.findByGoogleId(payload.googleId);
 
@@ -40,6 +46,23 @@ export class UsersService {
         user.picture = payload.picture;
       }
     }
+
+    return this.usersRepository.save(user);
+  }
+
+  async createLocalUser(
+    email: string,
+    displayName: string,
+    passwordHash: string,
+  ): Promise<User> {
+    const user = this.usersRepository.create({
+      email,
+      displayName,
+      passwordHash,
+      provider: 'local',
+      picture: null,
+      googleId: null,
+    });
 
     return this.usersRepository.save(user);
   }

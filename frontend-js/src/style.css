@@ -60,10 +60,23 @@ input[type='url'] {
   transition: border-color 120ms ease;
 }
 
-input[type='url']:focus {
+input[type='url']:focus,
+input[type='number']:focus,
+input[type='date']:focus,
+select:focus {
   outline: none;
   border-color: #4338ca;
   box-shadow: 0 0 0 3px rgba(67, 56, 202, 0.2);
+}
+
+input[type='number'],
+input[type='date'],
+select {
+  border: 1px solid #cbd5f5;
+  border-radius: 8px;
+  padding: 0.55rem 0.8rem;
+  font-size: 1rem;
+  background: #fff;
 }
 
 button,
@@ -104,6 +117,11 @@ button:hover,
   font-size: 0.9rem;
   color: #475569;
   margin-top: 0.75rem;
+}
+
+.hint.tiny {
+  font-size: 0.8rem;
+  margin: 0.15rem 0;
 }
 
 .grid {
@@ -168,6 +186,20 @@ textarea:focus {
   gap: 0.75rem;
 }
 
+.toggles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.5rem;
+  margin: 1rem 0 0.5rem;
+}
+
+.toggle-group {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  font-size: 0.95rem;
+}
+
 .entry-row {
   display: flex;
   justify-content: space-between;
@@ -199,4 +231,29 @@ textarea:focus {
 .session-info strong,
 .session-info code {
   font-size: 0.95rem;
+}
+
+.badge {
+  padding: 0.3rem 0.8rem;
+  border-radius: 999px;
+  background: #e2e8f0;
+  color: #0f172a;
+  font-size: 0.85rem;
+}
+
+.badge.selected {
+  background: rgba(67, 56, 202, 0.15);
+  color: #312e81;
+}
+
+.selected-habit {
+  display: flex;
+  gap: 0.5rem;
+  align-items: baseline;
+  flex-wrap: wrap;
+  margin-bottom: 0.75rem;
+}
+
+.selected-habit strong {
+  font-size: 1rem;
 }

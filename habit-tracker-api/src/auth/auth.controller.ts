@@ -1,6 +1,9 @@
 import {
   Controller,
   Get,
+  Post,
+  Body,
+  Query,
   Req,
   Res,
   UnauthorizedException,
@@ -12,6 +15,8 @@ import { ConfigService } from '@nestjs/config';
 import { AuthService } from './auth.service';
 import { AuthenticatedUser } from './interfaces/authenticated-user.interface';
 import type { RequestWithUser } from './interfaces/request-with-user.interface';
+import { RegisterLocalDto } from './dto/register-local.dto';
+import { LoginLocalDto } from './dto/login-local.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -19,6 +24,18 @@ export class AuthController {
     private readonly authService: AuthService,
     private readonly configService: ConfigService,
   ) {}
+
+  @Post('register')
+  async registerLocal(@Body() payload: RegisterLocalDto) {
+    const authenticated = await this.authService.registerLocal(payload);
+    return this.authService.buildLoginResponse(authenticated);
+  }
+
+  @Post('login')
+  async loginLocal(@Body() payload: LoginLocalDto) {
+    const authenticated = await this.authService.loginLocal(payload);
+    return this.authService.buildLoginResponse(authenticated);
+  }
 
   @Get('google')
   @UseGuards(AuthGuard('google'))
@@ -30,13 +47,15 @@ export class AuthController {
   googleAuthRedirect(
     @Req() req: RequestWithUser<AuthenticatedUser>,
     @Res() res: Response,
+    @Query('redirect_uri') redirectUri?: string,
   ) {
     if (!req.user) {
       throw new UnauthorizedException('Google authentication failed');
     }
 
     const payload = this.authService.buildLoginResponse(req.user);
-    const frontendUrl = this.configService.get<string>('auth.frontendAppUrl');
+    const frontendUrl =
+      redirectUri ?? this.configService.get<string>('auth.frontendAppUrl');
 
     if (frontendUrl) {
       const redirectUrl = new URL(frontendUrl);

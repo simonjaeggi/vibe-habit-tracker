@@ -9,6 +9,10 @@ import { AuthModule } from './auth/auth.module';
 import { User } from './users/entities/user.entity';
 import { DiaryEntriesModule } from './diary-entries/diary-entries.module';
 import { DiaryEntry } from './diary-entries/entities/diary-entry.entity';
+import { Habit } from './habits/entities/habit.entity';
+import { HabitEntry } from './habits/entities/habit-entry.entity';
+import { HabitsModule } from './habits/habits.module';
+import { AddHabits1740000000000 } from './migrations/1740000000000-add-habits';
 
 @Module({
   imports: [
@@ -31,7 +35,8 @@ import { DiaryEntry } from './diary-entries/entities/diary-entry.entity';
           return {
             type: 'sqlite',
             database: dbConfig.path ?? 'vibe-habit-tracker.sqlite',
-            entities: [User, DiaryEntry],
+            entities: [User, DiaryEntry, Habit, HabitEntry],
+            migrations: [AddHabits1740000000000],
             autoLoadEntities: true,
             synchronize,
           };
@@ -48,7 +53,8 @@ import { DiaryEntry } from './diary-entries/entities/diary-entry.entity';
         return {
           type: dbConfig.type,
           url,
-          entities: [User, DiaryEntry],
+          entities: [User, DiaryEntry, Habit, HabitEntry],
+          migrations: [AddHabits1740000000000],
           autoLoadEntities: true,
           synchronize,
         } as TypeOrmModuleOptions;
@@ -57,6 +63,7 @@ import { DiaryEntry } from './diary-entries/entities/diary-entry.entity';
     UsersModule,
     AuthModule,
     DiaryEntriesModule,
+    HabitsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

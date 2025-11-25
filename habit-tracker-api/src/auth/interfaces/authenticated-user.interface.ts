@@ -7,5 +7,5 @@ export interface OAuthTokens {
 
 export interface AuthenticatedUser {
   user: User;
-  tokens: OAuthTokens;
+  tokens?: OAuthTokens;
 }
