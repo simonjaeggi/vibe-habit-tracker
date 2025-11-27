@@ -87,7 +87,7 @@ private sealed class Result<out T> {
     data class Error(val message: String) : Result<Nothing>()
 }
 
-private const val DEFAULT_BASE_URL = "http://192.168.71.187:3000"
+private const val DEFAULT_BASE_URL = "http://192.168.1.40:3000"
 private const val PREFS_NAME = "vibe_habit_prefs"
 private const val PREF_JWT = "jwt"
 private const val PREF_BASE_URL = "base_url"
@@ -111,7 +111,7 @@ class MainActivity : ComponentActivity() {
             AppTheme {
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
-                    topBar = { TopAppBar(title = { Text("Vibe Habit Tester") }) },
+                    topBar = { TopAppBar(title = { Text("Vibe Habit Tracker") }) },
                 ) { padding ->
                     HabitPlayground(
                         baseUrl = baseUrlState,
