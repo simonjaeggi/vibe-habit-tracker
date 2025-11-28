@@ -1,8 +1,9 @@
-import { Handler, VercelRequest, VercelResponse } from '@vercel/node';
 import { ExpressAdapter } from '@nestjs/platform-express';
 import type { INestApplication } from '@nestjs/common';
 import { createApp } from '../src/bootstrap';
-import express from 'express';
+import express, { Request, Response } from 'express';
+
+type Handler = (req: Request, res: Response) => void | Promise<void>;
 
 let cachedHandler: Handler | undefined;
 let cachedApp: INestApplication | undefined;
@@ -18,13 +19,12 @@ async function bootstrap(): Promise<Handler> {
 
   const expressHandler = adapter.getInstance();
 
-  return (req: VercelRequest, res: VercelResponse) =>
-    expressHandler(req, res);
+  return (req: Request, res: Response) => expressHandler(req, res);
 }
 
 export default async function handler(
-  req: VercelRequest,
-  res: VercelResponse,
+  req: Request,
+  res: Response,
 ) {
   if (!cachedHandler) {
     cachedHandler = await bootstrap();

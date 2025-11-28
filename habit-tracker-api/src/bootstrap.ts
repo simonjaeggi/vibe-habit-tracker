@@ -7,7 +7,12 @@ import { AppModule } from './app.module';
 export async function createApp(
   adapter?: ExpressAdapter,
 ): Promise<INestApplication> {
-  const app = await NestFactory.create(AppModule, adapter);
+  let app: INestApplication;
+  if (adapter) {
+    app = await NestFactory.create(AppModule, adapter);
+  } else {
+    app = await NestFactory.create(AppModule);
+  }
   const configService = app.get(ConfigService);
 
   const origins = configService
