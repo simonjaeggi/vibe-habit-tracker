@@ -32,9 +32,14 @@ import { AddHabits1740000000000 } from './migrations/1740000000000-add-habits';
         const synchronize = dbConfig.synchronize ?? true;
 
         if (dbConfig.type === 'sqlite') {
+          const database =
+            dbConfig.inMemory === true
+              ? ':memory:'
+              : dbConfig.path ?? 'vibe-habit-tracker.sqlite';
+
           return {
             type: 'sqlite',
-            database: dbConfig.path ?? 'vibe-habit-tracker.sqlite',
+            database,
             entities: [User, DiaryEntry, Habit, HabitEntry],
             migrations: [AddHabits1740000000000],
             autoLoadEntities: true,
@@ -50,9 +55,16 @@ import { AddHabits1740000000000 } from './migrations/1740000000000-add-habits';
           );
         }
 
+        const ssl =
+          dbConfig.ssl === true
+            ? { rejectUnauthorized: dbConfig.sslRejectUnauthorized !== false }
+            : undefined;
+
         return {
           type: dbConfig.type,
           url,
+          ssl,
+          extra: ssl ? { ssl } : undefined,
           entities: [User, DiaryEntry, Habit, HabitEntry],
           migrations: [AddHabits1740000000000],
           autoLoadEntities: true,

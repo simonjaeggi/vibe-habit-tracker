@@ -12,7 +12,10 @@ export interface AppConfig {
     type: DatabaseType;
     url?: string;
     path?: string;
+    inMemory?: boolean;
     synchronize: boolean;
+    ssl?: boolean;
+    sslRejectUnauthorized?: boolean;
   };
   auth: {
     jwtSecret: string;
@@ -37,7 +40,11 @@ const configuration = (): AppConfig => {
       type: dbType,
       url: process.env.DATABASE_URL,
       path: process.env.DATABASE_PATH ?? 'vibe-habit-tracker.sqlite',
+      inMemory: process.env.DATABASE_IN_MEMORY === 'true',
       synchronize: process.env.DATABASE_SYNCHRONIZE !== 'false',
+      ssl: process.env.DATABASE_SSL === 'true',
+      sslRejectUnauthorized:
+        process.env.DATABASE_SSL_REJECT_UNAUTHORIZED !== 'false',
     },
     auth: {
       jwtSecret:
